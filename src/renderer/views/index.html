@@ -1,0 +1,54 @@
+<style>
+  .input-text {
+    align-self: normal;
+    height: 24px;
+    font-size: small;
+    flex: none;
+    border-radius: 4px;
+    margin-right: 16px;
+    transition: all 100ms ease-out;
+    padding-left: 5px;
+    background-color: var(--overlay_active);
+  }
+
+  .input-text:last-child {
+    margin-right: 0;
+  }
+
+  .disabled-input {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  .input-local-folder {
+    cursor: pointer;
+  }
+
+  @media (prefers-color-scheme: light) {
+    .text-color {
+      color: black;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .text-color {
+      color: white;
+    }
+  }
+</style>
+
+<setting-section data-title="配置">
+  <setting-panel>
+    <setting-list data-direction="column">
+      <setting-item>
+        <setting-text>API Key</setting-text>
+        <input
+          placeholder="请填写 API Key"
+          class="wakatime-apikey input-text text-color"
+          type="password"
+          spellcheck="false"
+        />
+      </setting-item>
+    </setting-list>
+  </setting-panel>
+</setting-section>

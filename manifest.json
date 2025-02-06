@@ -1,33 +1,30 @@
 {
   "manifest_version": 4,
   "type": "extension",
-  "name": "LLTemplate-Vite",
-  "slug": "LLTemplate-Vite",
-  "description": "A plugin template for LiteLoaderQQNT, powered by Vite & Typescript",
-  "version": "1.0.0",
-  "icon": null,
+  "name": "WakaTime",
+  "slug": "wakatime",
+  "description": "通过 WakaTime 跟踪您的 QQ 使用情况 / Track your QQ usage with WakaTime",
+  "version": "0.1.0",
+  "icon": "public/icon.svg",
+  "thumb": "public/thumb.svg",
   "authors": [
     {
-      "name": "MisaLiu",
-      "link": "https://github.com/MisaLiu"
+      "name": "KomoriDev",
+      "link": "https://github.com/KomoriDev"
     }
   ],
-  "platform": [
-    "win32",
-    "linux",
-    "darwin"
-  ],
+  "platform": ["win32", "linux", "darwin"],
   "injects": {
     "main": "./main/index.js",
     "preload": "./preload/index.js",
     "renderer": "./renderer/index.js"
   },
   "repository": {
-    "repo": "MisaLiu/LietLoaderQQNT-PluginTemplate-Vite",
+    "repo": "KomoriDev/qq-wakatime",
     "branch": "master",
     "release": {
-      "tag": "1.0.0",
-      "file": "LLTemplate-Vite"
+      "tag": "0.1.0",
+      "file": "qq-wakatime.zip"
     }
   }
 }

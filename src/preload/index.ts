@@ -1,7 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
-contextBridge.exposeInMainWorld('LLTemplate_Vite', {
-  greeting: (name: string) => {
-    ipcRenderer.send('LLTemplate-Vite.Greeting', name);
-  }
+contextBridge.exposeInMainWorld('WakaTime', {
+  getApiKey: () => ipcRenderer.invoke('LiteLoader.WakaTime.getApiKey'),
+  saveApiKey: (apikey: string) => ipcRenderer.invoke('LiteLoader.WakaTime.saveApiKey', apikey),
 });
