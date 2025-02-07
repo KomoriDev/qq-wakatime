@@ -1,8 +1,11 @@
 /// <reference types="vite/client" />
 
 declare namespace WakaTime {
+  type StatusBar = import('./main/schema').StatusBar;
+
   const getApiKey: () => Promise<string | null>;
   const saveApiKey: (apikey: string) => Promise<void>;
+  const getStatusBar: () => Promise<StatusBar>;
 }
 
 declare namespace LiteLoader {
