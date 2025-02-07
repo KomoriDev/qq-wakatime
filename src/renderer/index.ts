@@ -1,5 +1,7 @@
 import { localFetch, watchURLHash } from '@/lib';
 
+const VERSION = LiteLoader.plugins.liteloader_nonebot.manifest['version'];
+
 const initializeEditor = async () => {
   const statusBar = await WakaTime.getStatusBar();
 
@@ -57,8 +59,9 @@ export const onSettingWindowCreated = async (view: HTMLElement) => {
 
       try {
         const statusBar = await WakaTime.getStatusBar();
-        view.insertAdjacentHTML(
-          'beforeend',
+        const configSection = document.querySelector('setting-section[data-title="配置"]');
+        configSection?.insertAdjacentHTML(
+          'afterend',
           `
           <setting-section data-title="状态">
             <setting-panel>
@@ -90,6 +93,11 @@ export const onSettingWindowCreated = async (view: HTMLElement) => {
         await WakaTime.saveApiKey(target.value);
       }
     });
+
+    const versionText = view.querySelector<HTMLElement>('#version')!;
+    versionText.innerHTML += ` - v${VERSION}`;
+    const githubJumpBtn = view.querySelector<HTMLButtonElement>('.btn-github')!;
+    githubJumpBtn.onclick = () => LiteLoader.api.openExternal('https://github.com/KomoriDev/qq-wakatime');
   } catch (error) {
     view.innerHTML = `<p>Error loading page: ${error}</p>`;
   }
