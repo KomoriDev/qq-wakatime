@@ -51,6 +51,7 @@ export default [
       '@stylistic/ts/indent': ['error', 2],
       '@stylistic/ts/quotes': ['error', 'single'],
       '@stylistic/ts/semi': ['error', 'always'],
+      '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
   {
