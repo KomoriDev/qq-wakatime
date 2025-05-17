@@ -1,10 +1,11 @@
+import { Config } from '@/preload';
 import { StatusBar } from './schema';
 
 export class Wakatime {
   baseUrl: string = 'https://wakatime.com/api/v1';
 
   getApiKey(): string | null {
-    const config: Record<'apikey', string> = LiteLoader.api.config.get('wakatime');
+    const config: Config = LiteLoader.api.config.get('wakatime');
     if (config.apikey === undefined || config.apikey === '') {
       return null;
     }
