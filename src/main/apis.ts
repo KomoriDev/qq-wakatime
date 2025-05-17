@@ -22,4 +22,31 @@ export class Wakatime {
     const statusBar: StatusBar = (await response.json()).data;
     return statusBar;
   }
+
+  async sendHeartbeats() {
+    const apiKey = this.getApiKey();
+    if (!apiKey) {
+      throw new Error('API key is missing');
+    }
+
+    try {
+      await fetch(`${this.baseUrl}/users/current/heartbeats`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${btoa(apiKey)}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          entity: 'QQ',
+          type: 'app',
+          time: Date.now() / 1000,
+          category: 'browsing',
+          project: 'QQ',
+          is_write: false,
+        }),
+      });
+    } catch (e) {
+      console.log('send heatbeats error: ', e);
+    }
+  }
 }

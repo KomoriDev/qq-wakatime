@@ -4,6 +4,7 @@ const VERSION = LiteLoader.plugins.liteloader_nonebot.manifest['version'];
 
 const initializeEditor = async () => {
   let refreshTimer: NodeJS.Timeout | null = null;
+  let editorObserver: MutationObserver | null = null;
 
   const addStatusBarToOperation = async () => {
     const statusBar = await WakaTime.getStatusBar();
@@ -43,9 +44,40 @@ const initializeEditor = async () => {
     }, delay);
   };
 
-  const refreshMessages = () => {
-    console.log('refresh status bar');
+  const refreshStatusBar = () => {
     addStatusBarToOperation();
+  };
+
+  const watchQQEditor = () => {
+    const handleEditorChange = (element: Element) => {
+      element.addEventListener('input', async () => {
+        await WakaTime.sendHeartbeats();
+      });
+
+      element.addEventListener('focus', async () => {
+        await WakaTime.sendHeartbeats();
+      });
+    };
+
+    editorObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach((node) => {
+            if (node instanceof HTMLDivElement) {
+              const editor = node.querySelector<HTMLDivElement>('.ck.ck-content.ck-editor__editable');
+              if (editor) {
+                handleEditorChange(editor);
+              }
+            }
+          });
+        }
+      });
+    });
+
+    editorObserver.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
   };
 
   watchURLHash(async (currentHash: string) => {
@@ -54,15 +86,24 @@ const initializeEditor = async () => {
       refreshTimer = null;
     }
 
+    if (editorObserver) {
+      editorObserver.disconnect();
+      editorObserver = null;
+    }
+
     if (currentHash.includes('#/main/message')) {
       const config = await WakaTime.getConfig();
       const intervalMs = (config.refreshTime ? config.refreshTime : 5) * 60 * 1000;
+
+      if (config.isSendHeatbeat) {
+        watchQQEditor();
+      }
 
       if (!addStatusBarToOperation()) {
         retryAddingDiv(10, 100);
       }
 
-      refreshTimer = setInterval(refreshMessages, intervalMs);
+      refreshTimer = setInterval(refreshStatusBar, intervalMs);
     }
   });
 };
@@ -77,6 +118,8 @@ export const onSettingWindowCreated = async (view: HTMLElement) => {
 
     const apikeyInput = view.querySelector<HTMLInputElement>('.wakatime-apikey')!;
     const refreshTimeInput = view.querySelector<HTMLInputElement>('.wakatime-refresh')!;
+    const switchButton = view.querySelector<HTMLInputElement>('.wakatime-switch')!;
+    switchButton.toggleAttribute('is-active', config.isSendHeatbeat ? config.isSendHeatbeat : true);
 
     if (config.apikey) {
       apikeyInput.value = config.apikey;
@@ -129,6 +172,12 @@ export const onSettingWindowCreated = async (view: HTMLElement) => {
 
     apikeyInput.addEventListener('blur', (e) => handleConfigInputBlur(e, 'apikey'));
     refreshTimeInput.addEventListener('blur', (e) => handleConfigInputBlur(e, 'refreshTime', Number));
+    switchButton.onclick = async () => {
+      const config = await WakaTime.getConfig();
+      const isActive = switchButton.hasAttribute('is-active');
+      switchButton.toggleAttribute('is-active', !isActive);
+      await WakaTime.saveConfig({ ...config, isSendHeatbeat: !isActive });
+    };
 
     const versionText = view.querySelector<HTMLElement>('#version')!;
     versionText.innerHTML += ` - v${VERSION}`;

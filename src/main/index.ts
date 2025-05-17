@@ -15,5 +15,13 @@ ipcMain.handle('LiteLoader.WakaTime.getStatusBar', async () => {
 });
 
 ipcMain.handle('LiteLoader.WakaTime.saveConfig', async (_, config: Config) => {
-  LiteLoader.api.config.set('wakatime', { 'apikey': config.apikey, 'refreshTime': config.refreshTime });
+  LiteLoader.api.config.set('wakatime', {
+    'apikey': config.apikey,
+    'refreshTime': config.refreshTime,
+    'isSendHeatbeat': config.isSendHeatbeat,
+  });
+});
+
+ipcMain.handle('LiteLoader.WakaTime.sendHeartbeats', async () => {
+  return await wakatime.sendHeartbeats();
 });

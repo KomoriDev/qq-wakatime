@@ -7,6 +7,7 @@ declare namespace WakaTime {
   const getStatusBar: () => Promise<StatusBar>;
   const getConfig: () => Promise<Config>;
   const saveConfig: (config: Config) => Promise<void>;
+  const sendHeartbeats: () => Promise<void>;
 }
 
 declare namespace LiteLoader {
