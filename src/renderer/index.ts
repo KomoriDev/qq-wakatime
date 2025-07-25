@@ -1,6 +1,6 @@
 import { localFetch, watchURLHash } from '@/lib';
 
-const VERSION = LiteLoader.plugins.liteloader_nonebot.manifest['version'];
+const VERSION = LiteLoader.plugins.wakatime.manifest['version'];
 
 const initializeEditor = async () => {
   let refreshTimer: NodeJS.Timeout | null = null;
