@@ -28,6 +28,19 @@
 ## 💖 鸣谢
 
 - [`KomoriDev/Starify`](https://github.com/KomoriDev/Starify)：提供了引人注目的徽章
+- [`wakatime/vscode-wakatime`](https://github.com/wakatime/vscode-wakatime)：为本项目提供代码参考
+
+### 贡献者们
+
+<a href="#-鸣谢">
+  <img src="https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square" alt="contributors" />
+</a>
+
+感谢这些大佬对本项目作出的贡献:
+
+<a href="https://github.com/KomoriDev/qq-wakatime/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=KomoriDev/qq-wakatime&max=1000" alt="contributors" />
+</a>
 
 ## 📄 许可证
 
