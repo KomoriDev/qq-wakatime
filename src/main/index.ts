@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { Config } from '@/preload';
 
-import { Wakatime } from './apis';
+import { Wakatime } from './wakatime';
 
 const wakatime = new Wakatime();
 wakatime.initialize();
