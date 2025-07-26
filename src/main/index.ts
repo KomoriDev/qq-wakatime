@@ -4,6 +4,7 @@ import { Config } from '@/preload';
 import { Wakatime } from './apis';
 
 const wakatime = new Wakatime();
+wakatime.initialize();
 
 ipcMain.handle('LiteLoader.WakaTime.getConfig', async () => {
   const config: Config = LiteLoader.api.config.get('wakatime');

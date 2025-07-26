@@ -1,10 +1,27 @@
+import fs from 'fs';
+import path from 'path';
+import child_process from 'child_process';
+
 import { Config } from '@/preload';
 import { StatusBar } from './schema';
+import { Desktop } from './desktop';
+import { Dependencies } from './dependencies';
 
 export class Wakatime {
-  baseUrl: string = 'https://wakatime.com/api/v1';
+  private resourcesLocation: string = '';
+  private dependencies: Dependencies | undefined;
+  private baseUrl: string = 'https://wakatime.com/api/v1';
 
-  getApiKey(): string | null {
+  constructor() {
+    this.setResourcesLocation();
+  }
+
+  public initialize() {
+    this.dependencies = new Dependencies(this.resourcesLocation);
+    this.initializeDependencies();
+  }
+
+  public getApiKey(): string | null {
     const config: Config = LiteLoader.api.config.get('wakatime');
     if (config.apikey === undefined || config.apikey === '') {
       return null;
@@ -12,7 +29,7 @@ export class Wakatime {
     return config.apikey;
   }
 
-  async getStatusBar(): Promise<StatusBar> {
+  public async getStatusBar(): Promise<StatusBar> {
     const apiKey = this.getApiKey();
     if (!apiKey) {
       throw new Error('API key is missing');
@@ -23,30 +40,45 @@ export class Wakatime {
     return statusBar;
   }
 
-  async sendHeartbeats() {
+  public async sendHeartbeats() {
+    if (!this.dependencies?.isCliInstalled()) return;
+
     const apiKey = this.getApiKey();
     if (!apiKey) {
       throw new Error('API key is missing');
     }
 
-    try {
-      await fetch(`${this.baseUrl}/users/current/heartbeats`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${btoa(apiKey)}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          entity: 'https://im.qq.com/',
-          type: 'app',
-          time: Date.now() / 1000,
-          project: 'QQ',
-          category: 'communicating',
-          is_write: false,
-        }),
-      });
-    } catch (e) {
-      console.log('send heatbeats error: ', e);
-    }
+    const args: string[] = [];
+
+    args.push('--entity', 'https://im.qq.com/');
+    args.push('--entity-type', 'app');
+    args.push('--category', 'communicating');
+    args.push('--project', 'QQ');
+    args.push('--key', apiKey);
+
+    const binary = this.dependencies.getCliLocation();
+    const options = Desktop.buildOptions();
+    child_process.execFile(binary, args, options, (error, stdout, stderr) => {
+      if (error != null) {
+        if (stderr && stderr.toString() != '') console.error(stderr.toString());
+        if (stdout && stdout.toString() != '') console.error(stdout.toString());
+        console.error(error.toString());
+      }
+    });
+  }
+
+  private setResourcesLocation() {
+    const home = Desktop.getHomeDirectory();
+    const folder = path.join(home, '.wakatime');
+
+    fs.mkdirSync(folder, { recursive: true });
+    this.resourcesLocation = folder;
+  }
+
+  public initializeDependencies(): void {
+    console.debug('Initializing WakaTime');
+    this.dependencies?.checkAndInstallCli(() => {
+      console.debug('WakaTime initialized');
+    });
   }
 }
