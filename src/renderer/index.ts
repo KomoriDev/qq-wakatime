@@ -119,7 +119,7 @@ export const onSettingWindowCreated = async (view: HTMLElement) => {
     const apikeyInput = view.querySelector<HTMLInputElement>('.wakatime-apikey')!;
     const refreshTimeInput = view.querySelector<HTMLInputElement>('.wakatime-refresh')!;
     const switchButton = view.querySelector<HTMLInputElement>('.wakatime-switch')!;
-    switchButton.toggleAttribute('is-active', config.isSendHeatbeat ? config.isSendHeatbeat : true);
+    switchButton.toggleAttribute('is-active', config.isSendHeatbeat ?? false);
 
     if (config.apikey) {
       apikeyInput.value = config.apikey;
