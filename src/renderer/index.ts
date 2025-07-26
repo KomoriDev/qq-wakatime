@@ -133,7 +133,7 @@ export const onSettingWindowCreated = async (view: HTMLElement) => {
           <setting-section data-title="状态">
             <setting-panel>
               <setting-list data-direction="column">
-                <setting-item>
+                <setting-item class="activity" style="cursor: pointer;">
                   <div>
                     <setting-text>今日活动</setting-text>
                     <setting-text data-type="secondary">
@@ -147,6 +147,9 @@ export const onSettingWindowCreated = async (view: HTMLElement) => {
           </setting-section>
           `
         );
+
+        const activityItem = view.querySelector<HTMLElement>('.activity')!;
+        activityItem.onclick = () => LiteLoader.api.openExternal('https://wakatime.com/');
       } catch (error) {
         console.log(error);
       }
@@ -182,7 +185,9 @@ export const onSettingWindowCreated = async (view: HTMLElement) => {
     const versionText = view.querySelector<HTMLElement>('#version')!;
     versionText.innerHTML += ` - v${VERSION}`;
     const githubJumpBtn = view.querySelector<HTMLButtonElement>('.btn-github')!;
+    const sponsorBtn = view.querySelector<HTMLButtonElement>('.btn-sponsor')!;
     githubJumpBtn.onclick = () => LiteLoader.api.openExternal('https://github.com/KomoriDev/qq-wakatime');
+    sponsorBtn.onclick = () => LiteLoader.api.openExternal('https://afdian.com/@komoridev');
   } catch (error) {
     view.innerHTML = `<p>Error loading page: ${error}</p>`;
   }
