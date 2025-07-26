@@ -37,11 +37,11 @@ export class Wakatime {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          entity: 'QQ',
+          entity: 'https://im.qq.com/',
           type: 'app',
           time: Date.now() / 1000,
-          category: 'browsing',
           project: 'QQ',
+          category: 'communicating',
           is_write: false,
         }),
       });
