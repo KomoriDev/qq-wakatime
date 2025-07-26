@@ -4,7 +4,7 @@
   "name": "WakaTime",
   "slug": "wakatime",
   "description": "通过 WakaTime 跟踪您的 QQ 使用情况 / Track your QQ usage with WakaTime",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "icon": "public/icon.svg",
   "thumb": "public/thumb.svg",
   "authors": [
@@ -23,7 +23,7 @@
     "repo": "KomoriDev/qq-wakatime",
     "branch": "master",
     "release": {
-      "tag": "0.1.0",
+      "tag": "0.1.1",
       "file": "qq-wakatime.zip"
     }
   }
