@@ -7,13 +7,64 @@ import { StatusBar } from './schema';
 import { Desktop } from './desktop';
 import { Dependencies } from './dependencies';
 
+export function throttleAsync<Args extends unknown[]>(
+  fn: (...args: Args) => Promise<void>,
+  interval: number
+): [(...args: Args) => Promise<void>, () => void] {
+  let lastExecTime = 0;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+  let pendingArgs: Args | null = null;
+
+  const start = async (...args: Args): Promise<void> => {
+    const now = Date.now();
+
+    const run = async () => {
+      lastExecTime = Date.now();
+      await fn(...args);
+    };
+
+    if (lastExecTime + interval <= now) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      await run();
+    } else {
+      pendingArgs = args;
+      if (!timeout) {
+        timeout = setTimeout(
+          async () => {
+            timeout = null;
+            if (pendingArgs) {
+              await run();
+              pendingArgs = null;
+            }
+          },
+          lastExecTime + interval - now
+        );
+      }
+    }
+  };
+
+  const cancel = () => {
+    if (timeout) clearTimeout(timeout);
+    timeout = null;
+    pendingArgs = null;
+  };
+
+  return [start, cancel];
+}
+
 export class Wakatime {
   private resourcesLocation: string = '';
   private dependencies: Dependencies | undefined;
   private baseUrl: string = 'https://wakatime.com/api/v1';
 
+  private throttledHeartbeat: () => Promise<void>;
+
   constructor() {
     this.setResourcesLocation();
+    [this.throttledHeartbeat] = throttleAsync(this._sendHeartbeats.bind(this), 1 * 60 * 1000);
   }
 
   public initialize() {
@@ -40,7 +91,7 @@ export class Wakatime {
     return statusBar;
   }
 
-  public async sendHeartbeats() {
+  private async _sendHeartbeats() {
     if (!this.dependencies?.isCliInstalled()) return;
 
     const apiKey = this.getApiKey();
@@ -65,6 +116,10 @@ export class Wakatime {
         console.error(error.toString());
       }
     });
+  }
+
+  public async sendHeartbeats() {
+    await this.throttledHeartbeat();
   }
 
   private setResourcesLocation() {
